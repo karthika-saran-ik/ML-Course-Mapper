@@ -4,91 +4,188 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IK ML Course Mapper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
       font-size: 14px;
       line-height: 1.5;
-      color: #0F172A;
-      background: #F1F5F9;
+      color: #1E293B;
+      background: #F8FAFC;
       min-height: 100vh;
     }
-    .container {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 32px 24px 80px;
+
+    /* Top accent bar */
+    .top-bar {
+      height: 4px;
+      background: linear-gradient(90deg, #6366F1, #8B5CF6, #A78BFA);
     }
-    header { margin-bottom: 28px; }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .logo-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #6366F1, #8B5CF6);
+      border-radius: 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+    .logo-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: none;
+      stroke: #FFFFFF;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
     header h1 {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 800;
       color: #0F172A;
-      letter-spacing: -0.01em;
-    }
-    header .subtitle {
-      font-size: 13px;
-      color: #64748B;
-      margin-top: 4px;
+      letter-spacing: -0.02em;
     }
     header .badge {
       display: inline-block;
-      padding: 2px 8px;
-      background: #DCFCE7;
-      color: #166534;
+      padding: 3px 10px;
+      background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
+      color: #4338CA;
       font-size: 10px;
       font-weight: 700;
-      border-radius: 4px;
+      border-radius: 20px;
       margin-left: 8px;
       vertical-align: 4px;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
+    }
+    header .subtitle {
+      font-size: 14px;
+      color: #64748B;
+      margin-top: 8px;
+      font-weight: 400;
     }
 
+    /* Progress indicator */
+    .progress {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .progress-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #E2E8F0;
+      transition: all 0.3s ease;
+    }
+    .progress-dot.active {
+      background: #6366F1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+    .progress-dot.done {
+      background: #6366F1;
+    }
+    .progress-line {
+      width: 32px;
+      height: 2px;
+      background: #E2E8F0;
+      border-radius: 1px;
+      transition: background 0.3s ease;
+    }
+    .progress-line.done {
+      background: #6366F1;
+    }
+
+    /* Card */
     .card {
       background: #FFFFFF;
       border: 1px solid #E2E8F0;
-      border-radius: 10px;
-      padding: 24px;
+      border-radius: 16px;
+      padding: 32px;
       margin-bottom: 16px;
-      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.03);
     }
 
-    .step { margin-bottom: 24px; }
+    /* Steps */
+    .step {
+      margin-bottom: 28px;
+      animation: fadeSlideIn 0.3s ease;
+    }
     .step:last-child { margin-bottom: 0; }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .step-label {
-      display: inline-block;
-      font-size: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
       font-weight: 700;
-      color: #64748B;
+      color: #6366F1;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
+    }
+    .step-label .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      background: #EEF2FF;
+      color: #6366F1;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 800;
     }
     .step h3 {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
       color: #0F172A;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
+      line-height: 1.4;
     }
 
+    /* Option buttons */
     .options {
       display: grid;
-      gap: 8px;
+      gap: 10px;
     }
     .options.cols-4 { grid-template-columns: repeat(4, 1fr); }
     .options.cols-2 { grid-template-columns: 1fr 1fr; }
 
     .opt {
+      position: relative;
       display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 14px 16px;
-      background: #F8FAFC;
-      border: 1.5px solid #E2E8F0;
-      border-radius: 6px;
+      flex-direction: column;
+      padding: 16px 18px;
+      background: #FFFFFF;
+      border: 2px solid #E2E8F0;
+      border-radius: 12px;
       cursor: pointer;
-      transition: all 0.12s;
+      transition: all 0.2s ease;
       font-family: inherit;
       font-size: 13px;
       font-weight: 600;
@@ -97,113 +194,195 @@
       width: 100%;
     }
     .opt:hover {
-      background: #F1F5F9;
-      border-color: #94A3B8;
+      border-color: #A5B4FC;
+      background: #FAFAFE;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
     }
     .opt.selected {
-      background: #0F172A;
+      background: linear-gradient(135deg, #6366F1, #7C3AED);
       color: #FFFFFF;
-      border-color: #0F172A;
+      border-color: transparent;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      transform: translateY(-1px);
+    }
+    .opt.selected .hint {
+      color: rgba(255, 255, 255, 0.75);
     }
     .opt .hint {
       display: block;
       font-size: 11px;
       font-weight: 400;
-      opacity: 0.7;
-      margin-top: 2px;
+      color: #94A3B8;
+      margin-top: 4px;
+      line-height: 1.4;
     }
 
+    /* Divider between steps */
+    .step-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #E2E8F0, transparent);
+      margin: 24px 0;
+    }
+
+    /* Result card */
     .result {
       display: none;
       text-align: center;
-      padding: 32px 24px;
+      padding: 40px 32px;
+      animation: fadeSlideIn 0.4s ease;
     }
     .result.visible { display: block; }
+
+    .result-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      margin-bottom: 20px;
+    }
+    .result-icon.both { background: linear-gradient(135deg, #C7D2FE, #A5B4FC); }
+    .result-icon.advanced { background: linear-gradient(135deg, #A7F3D0, #6EE7B7); }
+    .result-icon.flagship { background: linear-gradient(135deg, #BBF7D0, #86EFAC); }
+    .result-icon.misfit { background: linear-gradient(135deg, #FECACA, #FCA5A5); }
+
+    .result-icon svg {
+      width: 28px;
+      height: 28px;
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .result-icon.both svg { stroke: #4338CA; }
+    .result-icon.advanced svg { stroke: #047857; }
+    .result-icon.flagship svg { stroke: #15803D; }
+    .result-icon.misfit svg { stroke: #DC2626; }
+
     .result-badge {
       display: inline-block;
-      padding: 10px 24px;
+      padding: 8px 20px;
       border-radius: 8px;
-      font-size: 16px;
-      font-weight: 800;
-      letter-spacing: 0.02em;
-      margin-bottom: 12px;
-    }
-    .result-badge.both { background: #C7D2FE; color: #312E81; }
-    .result-badge.advanced { background: #A7F3D0; color: #064E3B; }
-    .result-badge.flagship { background: #D1FAE5; color: #064E3B; }
-    .result-badge.misfit { background: #FEE2E2; color: #991B1B; }
-    .result-reason {
       font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      margin-bottom: 16px;
+    }
+    .result-badge.both { background: #EEF2FF; color: #4338CA; }
+    .result-badge.advanced { background: #ECFDF5; color: #047857; }
+    .result-badge.flagship { background: #F0FDF4; color: #15803D; }
+    .result-badge.misfit { background: #FEF2F2; color: #DC2626; }
+
+    .result-reason {
+      font-size: 15px;
       color: #475569;
-      margin-bottom: 24px;
-      line-height: 1.6;
+      margin-bottom: 28px;
+      line-height: 1.7;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .btn-reset {
-      padding: 10px 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
       background: #FFFFFF;
       color: #0F172A;
-      border: 1.5px solid #CBD5E1;
-      border-radius: 6px;
+      border: 2px solid #E2E8F0;
+      border-radius: 10px;
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
       font-family: inherit;
-      transition: all 0.12s;
+      transition: all 0.2s ease;
     }
     .btn-reset:hover {
-      background: #F1F5F9;
-      border-color: #64748B;
+      border-color: #94A3B8;
+      background: #F8FAFC;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+    }
+    .btn-reset svg {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
-    .hidden { display: none; }
+    .hidden { display: none !important; }
 
     footer {
-      margin-top: 32px;
-      padding-top: 18px;
+      margin-top: 40px;
+      padding-top: 20px;
       border-top: 1px solid #E2E8F0;
-      font-size: 11px;
+      font-size: 12px;
       color: #94A3B8;
       text-align: center;
+      font-weight: 500;
     }
 
     @media (max-width: 600px) {
+      .container { padding: 28px 16px 60px; }
+      .card { padding: 24px 20px; }
       .options.cols-4 { grid-template-columns: repeat(2, 1fr); }
       .options.cols-2 { grid-template-columns: 1fr; }
+      header h1 { font-size: 22px; }
+      .result { padding: 32px 20px; }
     }
   </style>
 </head>
 <body>
 
+  <div class="top-bar"></div>
+
   <div class="container">
     <header>
-      <h1>IK ML Course Mapper <span class="badge">Sales Tool</span></h1>
-      <p class="subtitle">Answer a few questions about the lead to find the right ML program recommendation.</p>
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <h1>ML Course Mapper <span class="badge">Internal</span></h1>
+      <p class="subtitle">Identify the right ML program for your lead in a few clicks.</p>
     </header>
 
+    <!-- Progress -->
+    <div class="progress" id="progress">
+      <div class="progress-dot active" id="prog-1"></div>
+      <div class="progress-line" id="prog-line-1"></div>
+      <div class="progress-dot" id="prog-2"></div>
+      <div class="progress-line" id="prog-line-2"></div>
+      <div class="progress-dot" id="prog-3"></div>
+    </div>
+
+    <!-- Form -->
     <div class="card" id="form-card">
-      <!-- Step 1: Years -->
       <div class="step" id="step-years">
-        <span class="step-label">Step 1</span>
+        <div class="step-label"><span class="step-num">1</span> Experience</div>
         <h3>Total years of professional experience</h3>
         <div class="options cols-4" id="years-options">
-          <button class="opt" data-value="0-7">0–7 yrs</button>
-          <button class="opt" data-value="8-15">8–15 yrs</button>
-          <button class="opt" data-value="15-20">15–20 yrs</button>
-          <button class="opt" data-value="20+">&gt; 20 yrs</button>
+          <button class="opt" data-value="0-7">0–7 yrs<span class="hint">Fresh grad / Early career</span></button>
+          <button class="opt" data-value="8-15">8–15 yrs<span class="hint">Mid-to-senior</span></button>
+          <button class="opt" data-value="15-20">15–20 yrs<span class="hint">Very senior</span></button>
+          <button class="opt" data-value="20+">&gt; 20 yrs<span class="hint">Executive level</span></button>
         </div>
       </div>
 
-      <!-- Step 2: dynamic -->
       <div class="step hidden" id="step-coding">
-        <span class="step-label">Step 2</span>
+        <div class="step-divider"></div>
+        <div class="step-label"><span class="step-num">2</span> Coding</div>
         <h3 id="coding-title"></h3>
         <div class="options cols-2" id="coding-options"></div>
       </div>
 
-      <!-- Step 3: dynamic -->
       <div class="step hidden" id="step-3">
-        <span class="step-label">Step 3</span>
+        <div class="step-divider"></div>
+        <div class="step-label"><span class="step-num">3</span> <span id="step3-label-text">Background</span></div>
         <h3 id="step3-title"></h3>
         <div class="options cols-2" id="step3-options"></div>
       </div>
@@ -211,17 +390,20 @@
 
     <!-- Result -->
     <div class="card result" id="result-card">
+      <div class="result-icon" id="result-icon"></div>
       <div class="result-badge" id="result-badge"></div>
       <p class="result-reason" id="result-reason"></p>
-      <button class="btn-reset" id="reset-btn">Start Over</button>
+      <button class="btn-reset" id="reset-btn">
+        <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        Start Over
+      </button>
     </div>
 
-    <footer>IK ML Course Mapper &middot; Internal Interview Kickstart tool</footer>
+    <footer>Interview Kickstart &middot; ML Course Mapper</footer>
   </div>
 
   <script>
     const state = {};
-
     const $ = id => document.getElementById(id);
 
     function selectInGroup(container, btn) {
@@ -229,29 +411,74 @@
       btn.classList.add('selected');
     }
 
-    function hideStep(id) { $(id).classList.add('hidden'); }
-    function showStep(id) { $(id).classList.remove('hidden'); }
+    function showStep(id) {
+      const el = $(id);
+      el.classList.remove('hidden');
+      el.style.animation = 'none';
+      el.offsetHeight;
+      el.style.animation = '';
+    }
     function clearStep(id) {
       $(id).classList.add('hidden');
       const opts = $(id).querySelector('.options');
       if (opts) opts.querySelectorAll('.opt').forEach(b => b.classList.remove('selected'));
     }
 
+    function updateProgress(step, total) {
+      for (let i = 1; i <= 3; i++) {
+        const dot = $('prog-' + i);
+        const line = $('prog-line-' + (i - 1));
+        dot.className = 'progress-dot';
+        if (i < step) dot.classList.add('done');
+        else if (i === step) dot.classList.add('active');
+        if (line) {
+          line.className = 'progress-line';
+          if (i <= step) line.classList.add('done');
+        }
+      }
+    }
+
     function showResult(outcome, reason) {
+      const icon = $('result-icon');
       const badge = $('result-badge');
+      icon.className = 'result-icon';
       badge.className = 'result-badge';
-      const labels = {
-        BOTH: ['both', 'BOTH ADVANCED & FLAGSHIP ML'],
-        ADVANCED: ['advanced', 'ADVANCED ML'],
-        FLAGSHIP: ['flagship', 'FLAGSHIP ML'],
-        MISFIT: ['misfit', 'MISFIT — not a fit']
+
+      const config = {
+        BOTH: {
+          cls: 'both',
+          label: 'BOTH ADVANCED & FLAGSHIP ML',
+          svg: '<svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>'
+        },
+        ADVANCED: {
+          cls: 'advanced',
+          label: 'ADVANCED ML',
+          svg: '<svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>'
+        },
+        FLAGSHIP: {
+          cls: 'flagship',
+          label: 'FLAGSHIP ML',
+          svg: '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+        },
+        MISFIT: {
+          cls: 'misfit',
+          label: 'NOT A FIT',
+          svg: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
+        }
       };
-      const [cls, text] = labels[outcome];
-      badge.classList.add(cls);
-      badge.textContent = text;
+
+      const c = config[outcome];
+      icon.classList.add(c.cls);
+      icon.innerHTML = c.svg;
+      badge.classList.add(c.cls);
+      badge.textContent = c.label;
       $('result-reason').textContent = reason;
       $('result-card').classList.add('visible');
+      $('result-card').style.animation = 'none';
+      $('result-card').offsetHeight;
+      $('result-card').style.animation = '';
       $('result-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      updateProgress(4, 3);
     }
 
     function hideResult() {
@@ -269,11 +496,14 @@
       clearStep('step-coding');
       clearStep('step-3');
       hideResult();
+      updateProgress(1, 3);
 
       if (state.years === '20+') {
         showResult('MISFIT', 'More than 20 years of experience — not a fit for either ML program regardless of profile.');
         return;
       }
+
+      updateProgress(2, 3);
 
       if (state.years === '0-7') {
         $('coding-title').textContent = 'Are they an active coder?';
@@ -287,8 +517,8 @@
       if (state.years === '8-15' || state.years === '15-20') {
         $('coding-title').textContent = 'Active coder, OR coded actively within the last 5 years?';
         $('coding-options').innerHTML = `
-          <button class="opt" data-value="recent"><strong>Yes</strong><span class="hint">Active coder OR non-active coder (TPM, EM) who coded hands-on within last 5 yrs</span></button>
-          <button class="opt" data-value="none"><strong>No</strong><span class="hint">Last coded > 5 yrs ago, or never coded professionally</span></button>
+          <button class="opt" data-value="recent"><strong>Yes</strong><span class="hint">Active coder OR non-active coder (e.g., TPM, EM) who coded hands-on within last 5 yrs</span></button>
+          <button class="opt" data-value="none"><strong>No</strong><span class="hint">Last coded &gt; 5 yrs ago, or never coded professionally</span></button>
         `;
         showStep('step-coding');
       }
@@ -310,12 +540,13 @@
           showResult('BOTH', 'Active coder with 0–7 years — strong fit for both Advanced ML and Flagship ML.');
           return;
         }
-        // inactive — ask STEM
+        $('step3-label-text').textContent = 'Background';
         $('step3-title').textContent = 'Did they graduate in a STEM field?';
         $('step3-options').innerHTML = `
           <button class="opt" data-value="stem"><strong>Yes — STEM degree</strong><span class="hint">CS, Statistics, Math, Engineering, Physics, related</span></button>
           <button class="opt" data-value="non-stem"><strong>No — Non-STEM degree</strong><span class="hint">Humanities, business, arts, social sciences</span></button>
         `;
+        updateProgress(3, 3);
         showStep('step-3');
         return;
       }
@@ -326,12 +557,13 @@
           showResult('MISFIT', 'Non-coder with no coding history, or last coded more than 5 years ago, or non-STEM / non-tech background — not a fit.');
           return;
         }
-        // recent coding — ask direction
+        $('step3-label-text').textContent = 'Direction';
         $('step3-title').textContent = "What's their target direction?";
         $('step3-options').innerHTML = `
           <button class="opt" data-value="management"><strong>Management / Leadership</strong><span class="hint">Aiming to manage an AI/ML team</span></button>
           <button class="opt" data-value="research"><strong>Research-oriented role</strong><span class="hint">e.g., Research Analyst</span></button>
         `;
+        updateProgress(3, 3);
         showStep('step-3');
         return;
       }
@@ -342,7 +574,6 @@
           showResult('MISFIT', 'Non-coder with no coding history, or last coded more than 5 years ago, or non-STEM / non-tech background — not a fit.');
           return;
         }
-        // recent coding — only management is a fit at this band
         showResult('FLAGSHIP', 'Active coder or coded within last 5 years, aiming to manage an AI/ML team — Flagship ML is the fit.');
         return;
       }
@@ -356,7 +587,6 @@
       state.step3 = btn.dataset.value;
       hideResult();
 
-      // 0-7 + inactive + STEM/non-STEM
       if (state.years === '0-7') {
         if (state.step3 === 'stem') {
           showResult('FLAGSHIP', 'Non-coder / non-tech + STEM graduate — Flagship ML is the fit.');
@@ -366,7 +596,6 @@
         return;
       }
 
-      // 8-15 + recent coding + direction
       if (state.years === '8-15') {
         if (state.step3 === 'management') {
           showResult('FLAGSHIP', 'Active coder or coded within last 5 years, aiming to manage an AI/ML team — Flagship ML is the fit.');
@@ -384,6 +613,7 @@
       clearStep('step-coding');
       clearStep('step-3');
       hideResult();
+      updateProgress(1, 3);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   </script>
