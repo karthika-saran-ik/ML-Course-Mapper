@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IK Course Matcher · Sales Tool</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #0F172A;
+      background: #F1F5F9;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+    }
+
+    header { margin-bottom: 28px; }
+    header h1 {
+      font-size: 24px;
+      font-weight: 800;
+      color: #0F172A;
+      letter-spacing: -0.01em;
+    }
+    header .subtitle {
+      font-size: 13px;
+      color: #64748B;
+      margin-top: 4px;
+    }
+    header .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      background: #DCFCE7;
+      color: #166534;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 4px;
+      margin-left: 8px;
+      vertical-align: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .card {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .question { margin-bottom: 24px; }
+    .question:last-child { margin-bottom: 0; }
+    .question .step-label {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+    .question h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0F172A;
+      margin-bottom: 12px;
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .segmented button {
+      padding: 12px 8px;
+      background: #F8FAFC;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.12s;
+    }
+    .segmented button:hover {
+      background: #F1F5F9;
+      border-color: #94A3B8;
+    }
+    .segmented button.selected {
+      background: #0F172A;
+      color: #FFFFFF;
+      border-color: #0F172A;
+    }
+
+    .radio-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .radio-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 14px;
+      background: #F8FAFC;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .radio-option:hover {
+      background: #F1F5F9;
+      border-color: #94A3B8;
+    }
+    .radio-option.selected {
+      background: #EFF6FF;
+      border-color: #2563EB;
+    }
+    .radio-option input[type="radio"] {
+      margin-top: 3px;
+      accent-color: #0F172A;
+      flex-shrink: 0;
+    }
+    .radio-option .radio-label {
+      flex: 1;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .radio-option .radio-label strong { font-weight: 700; }
+    .radio-option .radio-label .hint {
+      display: block;
+      font-size: 11px;
+      color: #64748B;
+      margin-top: 2px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: #0F172A;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.12s;
+      margin-top: 8px;
+    }
+    .btn-primary:hover { background: #1E293B; }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-secondary {
+      padding: 10px 16px;
+      background: #FFFFFF;
+      color: #0F172A;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.12s;
+    }
+    .btn-secondary:hover {
+      background: #F1F5F9;
+      border-color: #64748B;
+    }
+
+    .result-card { display: none; }
+    .result-card.visible { display: block; }
+    .result-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      margin-bottom: 12px;
+    }
+    .result-badge.both { background: #C7D2FE; color: #312E81; }
+    .result-badge.advanced { background: #A7F3D0; color: #064E3B; }
+    .result-badge.flagship { background: #D1FAE5; color: #064E3B; }
+    .result-badge.misfit { background: #FEE2E2; color: #991B1B; }
+
+    .result-reason {
+      font-size: 14px;
+      color: #475569;
+      margin-bottom: 24px;
+      line-height: 1.5;
+      padding-bottom: 18px;
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    .result-section { margin-bottom: 24px; }
+    .result-section:last-of-type { margin-bottom: 0; }
+    .result-section h4 {
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+    }
+    .pitch-list { list-style: none; padding: 0; }
+    .pitch-list li {
+      padding: 8px 0 8px 18px;
+      position: relative;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #334155;
+      border-bottom: 1px dashed #E2E8F0;
+    }
+    .pitch-list li:last-child { border-bottom: none; }
+    .pitch-list li:before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: #94A3B8;
+      font-weight: 700;
+    }
+
+    .objection-list { list-style: none; padding: 0; }
+    .objection-list li {
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      background: #F8FAFC;
+      border-left: 3px solid #94A3B8;
+      border-radius: 0 4px 4px 0;
+    }
+    .objection-list li:last-child { margin-bottom: 0; }
+    .objection-q {
+      font-size: 13px;
+      font-weight: 600;
+      color: #0F172A;
+      margin-bottom: 6px;
+      font-style: italic;
+    }
+    .objection-q:before { content: '"'; }
+    .objection-q:after { content: '"'; }
+    .objection-a {
+      font-size: 13px;
+      color: #334155;
+      line-height: 1.5;
+    }
+    .objection-a:before {
+      content: "Reply: ";
+      font-weight: 700;
+      color: #059669;
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid #E2E8F0;
+    }
+    .result-actions .btn-secondary { flex: 1; }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 18px;
+      background: #0F172A;
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 6px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+    }
+    .toast.show { opacity: 1; }
+
+    footer {
+      margin-top: 32px;
+      padding-top: 18px;
+      border-top: 1px solid #E2E8F0;
+      font-size: 11px;
+      color: #94A3B8;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .segmented { grid-template-columns: repeat(2, 1fr); }
+      .radio-group { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>IK Course Matcher <span class="badge">Sales Tool</span></h1>
+      <p class="subtitle">Pick the lead's profile · Get the right program + pitch + objection handling in 30 seconds.</p>
+    </header>
+
+    <!-- FORM CARD -->
+    <div class="card" id="form-card">
+      <!-- Step 1: Years bucket -->
+      <div class="question" id="q-years">
+        <span class="step-label">Step 1</span>
+        <h3>Total years of professional experience</h3>
+        <div class="segmented" id="years-control">
+          <button type="button" data-value="0-7">0–7 yrs</button>
+          <button type="button" data-value="8-15">8–15 yrs</button>
+          <button type="button" data-value="15-20">15–20 yrs</button>
+          <button type="button" data-value="20+">&gt; 20 yrs</button>
+        </div>
+      </div>
+
+      <!-- Dynamic questions for selected bucket -->
+      <div id="dynamic-questions"></div>
+
+      <button class="btn-primary" id="submit-btn" disabled>Find Best Fit →</button>
+    </div>
+
+    <!-- RESULT CARD -->
+    <div class="card result-card" id="result-card">
+      <div class="result-badge" id="result-badge"></div>
+      <div class="result-reason" id="result-reason"></div>
+
+      <div class="result-section">
+        <h4>What to pitch</h4>
+        <ul class="pitch-list" id="pitch-list"></ul>
+      </div>
+
+      <div class="result-section">
+        <h4>Likely objections &amp; how to handle them</h4>
+        <ul class="objection-list" id="objection-list"></ul>
+      </div>
+
+      <div class="result-actions">
+        <button class="btn-secondary" id="copy-btn">Copy CRM Note</button>
+        <button class="btn-secondary" id="reset-btn">Start Over</button>
+      </div>
+    </div>
+
+    <footer>
+      IK Course Matcher · Internal Interview Kickstart tool · v1.1
+    </footer>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    /* ============================================================
+     * ROUTING RULES (v5)
+     * ============================================================ */
+    function routeLead(profile) {
+      const { years, coding, background, direction } = profile;
+
+      if (years === '20+') {
+        return result('MISFIT', '20-plus', profile);
+      }
+
+      if (years === '0-7') {
+        if (coding === 'active') return result('BOTH', '0-7-active', profile);
+        if (background === 'stem') return result('FLAGSHIP', '0-7-stem-noncoder', profile);
+        return result('MISFIT', '0-7-nonstem', profile);
+      }
+
+      if (years === '8-15') {
+        if (coding === 'recent') {
+          if (direction === 'management') return result('FLAGSHIP', '8-15-management', profile);
+          if (direction === 'research') return result('ADVANCED', '8-15-research', profile);
+        }
+        return result('MISFIT', '8-15-no-recent-coding', profile);
+      }
+
+      if (years === '15-20') {
+        if (coding === 'recent') {
+          if (direction === 'management') return result('FLAGSHIP', '15-20-management', profile);
+          if (direction === 'research') return result('MISFIT', '15-20-research-misfit', profile);
+        }
+        return result('MISFIT', '15-20-no-recent-coding', profile);
+      }
+
+      return result('MISFIT', 'unknown', profile);
+    }
+
+    function result(outcome, templateKey, profile) {
+      const t = PITCH_TEMPLATES[templateKey] || {};
+      return {
+        outcome,
+        reason: t.reason || '',
+        pitch: t.pitch || [],
+        objections: t.objections || [],
+        crmNote: buildCrmNote(outcome, t, profile)
+      };
+    }
+
+    function buildCrmNote(outcome, template, profile) {
+      const yearsLabel = {'0-7':'0–7 yrs','8-15':'8–15 yrs','15-20':'15–20 yrs','20+':'>20 yrs'}[profile.years];
+      const codingLabel = {'active':'Active coder','inactive':'Not currently coding','recent':'Coded within last 5 yrs','none':'No recent/never coded'}[profile.coding] || '';
+      const bgLabel = {'stem':'STEM graduate','non-stem':'Non-STEM'}[profile.background] || '';
+      const dirLabel = {'management':'Management direction','research':'Research direction'}[profile.direction] || '';
+
+      const outcomeLabel = {
+        'BOTH':'Both Advanced ML & Flagship ML',
+        'ADVANCED':'Advanced ML',
+        'FLAGSHIP':'Flagship ML',
+        'MISFIT':'Not a fit for either course'
+      }[outcome];
+
+      let note = `IK Course Match → ${outcomeLabel}\n`;
+      note += `Profile: ${yearsLabel}`;
+      if (codingLabel) note += ` · ${codingLabel}`;
+      if (bgLabel) note += ` · ${bgLabel}`;
+      if (dirLabel) note += ` · ${dirLabel}`;
+      if (template.reason) note += `\nWhy: ${template.reason}`;
+      return note;
+    }
+
+    /* ============================================================
+     * PITCH TEMPLATES
+     * ============================================================ */
+    const PITCH_TEMPLATES = {
+      '0-7-active': {
+        reason: 'Sweet spot — early career + active coding = highest conversion zone. Both programs fit; the choice is depth vs breadth.',
+        pitch: [
+          'Default pitch to FLAGSHIP — 9 months, broader role coverage (ML Eng / DS / AI Eng / DABA). Best fit if they want career optionality.',
+          'Offer ADVANCED ML as the upgrade path if they explicitly want Deep Learning depth and can commit to 14 months.',
+          'Lead with Agentic AI coverage — 25% of MLE job descriptions now ask for it. Both programs include it as a flagship module.'
+        ],
+        objections: [
+          { q: "I'm too junior — will companies actually hire me for ML roles?", a: "IK placement data shows 0–7 yr engineers are the prime hiring band for ML Engineer L3/L4 roles. Our interview prep is specifically tuned for this level." },
+          { q: "Which one should I pick — Flagship or Advanced?", a: "Flagship if you want optionality across ML / DS / AI Eng — broader and faster. Advanced if Deep Learning depth is the explicit goal — deeper and longer. The Agentic AI content is the same in both." },
+          { q: "I just graduated — do I have enough experience to apply this?", a: "Yes. Most fresh-grad cohort members land their first ML role within 6 months of completing the program. The capstone projects act as portfolio pieces for the interview." }
+        ]
+      },
+
+      '0-7-stem-noncoder': {
+        reason: 'STEM foundation handles the math; Flagship rebuilds coding from Day 1. Strong fit for biostatisticians, financial analysts, STEM PhDs.',
+        pitch: [
+          'Flagship starts with Python from scratch — perfect for STEM grads who haven\'t coded recently or coded only academically.',
+          'Their stats / math background means ML theory will land fast — they\'ll catch up to coders by month 3.',
+          'Cite concrete archetypes: Biostat → healthcare ML, Fin Analyst → fintech ML, STEM PhD → applied scientist tracks.'
+        ],
+        objections: [
+          { q: "I haven't coded in years — will I struggle?", a: "Flagship dedicates the first month to Python fundamentals. Your STEM background means you'll grasp it faster than someone learning from absolute zero." },
+          { q: "Will I be behind the software engineers in the cohort?", a: "First few weeks, yes — they'll be ahead on syntax. By month 3, your stats / math advantage levels the field. The capstone projects favor strong analytical thinking, which is your strength." },
+          { q: "I'm not from a tech background — is this realistic for me?", a: "Your STEM degree is the qualifier we look for. Tech employers value the analytical rigor of STEM grads — what they want added is the ML tooling, which is exactly what Flagship teaches." }
+        ]
+      },
+
+      '0-7-nonstem': {
+        reason: 'Non-STEM + no coding = foundation gap too wide to close in 9–14 months. Not a fit.',
+        pitch: [
+          'Politely decline. The math + coding prerequisite gap is too wide for either program to close in the available time.',
+          'Suggest free pre-work: Khan Academy (math), CS50 / freeCodeCamp (programming). 6–12 months of foundation work.',
+          'Capture in CRM as a "future lead" — they may convert after they\'ve done the pre-work.'
+        ],
+        objections: [
+          { q: "I really want to do ML — please give me a chance.", a: "I want you to succeed, and right now the foundational gap means you wouldn't get full value from the program. Let me share some free resources — Khan Academy for math, CS50 for programming — and let's circle back in 6–12 months." },
+          { q: "Can I just take the course and catch up as I go?", a: "Our learners with this starting point struggle to keep up with the live sessions and rarely convert to an ML role on the other side. I'd rather see you succeed in a year than struggle now." },
+          { q: "What if I'm willing to put in extra hours?", a: "Effort isn't the limiter — the issue is foundational math and coding fluency that can't be built in parallel with the program's pace. Get those built first, then come back and you'll fly through Flagship." }
+        ]
+      },
+
+      '8-15-management': {
+        reason: 'Senior with coding background pivoting into AI/ML management — Flagship\'s breadth and pace fit the leadership path.',
+        pitch: [
+          'Flagship gives them the technical breadth to credibly manage AI/ML teams — speak the language, ask the right questions, evaluate outputs.',
+          'Highlight case studies and capstone projects — leaders need to evaluate work, not build from scratch.',
+          'Time commitment: 4–6 hrs live + 6–8 hrs self-paced practice per week. Designed for senior schedules.'
+        ],
+        objections: [
+          { q: "I haven't actively coded in 3 years — will I keep up?", a: "That's exactly the Flagship profile. The first module rebuilds your coding muscle; the rest leverages your career-built judgment, which is your real edge over junior cohort members." },
+          { q: "Why not Advanced ML — isn't the depth better?", a: "Advanced ML is built for ICs going deep into Deep Learning research. For a management track, Flagship's breadth across ML / DS / AI Eng / DABA is far more useful — you'll be making technology decisions across all of them." },
+          { q: "I already manage a team — what does this add?", a: "Right now you can manage them by reputation. After Flagship, you can manage them by understanding what they're building — which changes how you prioritize, hire, and evaluate." }
+        ]
+      },
+
+      '8-15-research': {
+        reason: 'Senior IC with coding background targeting research-oriented role — Advanced ML\'s depth (DL, applied science, research-grade material) is the right fit.',
+        pitch: [
+          'Advanced ML covers VAEs, Diffusion models, Graph Neural Networks, RLHF — research-grade material not in Flagship.',
+          'FAANG+ applied scientists teach the program — strong network signal for research-track roles.',
+          '10 capstone projects with FAANG mentorship → real research artifacts for their portfolio.'
+        ],
+        objections: [
+          { q: "$11,400 is steep — is it worth it?", a: "For a senior pivot to a research IC role, the network access + capstone portfolio compound. It's priced against post-program salary uplift, not against the absolute number. Average post-program salary uplift recoups the investment in under 4 months." },
+          { q: "I have 12 years of experience — do I really need this?", a: "For an ML / research transition specifically, yes — this is the fastest credible bridge into Applied Scientist work. Your existing experience accelerates the program; it doesn't substitute for it." },
+          { q: "14 months is a long commitment.", a: "It's structured at 10–14 hours per week, designed for working professionals. If 14 months feels long, Flagship's 9-month track is the alternative — though it's broader, not research-focused." }
+        ]
+      },
+
+      '8-15-no-recent-coding': {
+        reason: 'Senior + no recent coding (>5 yr gap or never coded) = the coding gap is too wide to bridge in program duration at this seniority.',
+        pitch: [
+          'Decline politely. The coding gap at 8–15 yrs of experience is structural, not motivational.',
+          'Optionally suggest 6–12 months of Python self-study before reapplying.',
+          'Preserve the relationship — they may refer others, or return after pre-work.'
+        ],
+        objections: [
+          { q: "I'm willing to put in the time — let me try.", a: "I appreciate that. Our placement data shows learners with a 5+ year coding gap at your seniority typically struggle to convert to ML roles. I want to set you up for a win, not a slog." },
+          { q: "I used to code 10 years ago — does that count?", a: "ML coding is Python-heavy with modern libraries (PyTorch, scikit-learn, LangChain) that didn't exist 10 years ago. The fluency we need is contemporary, not historical." },
+          { q: "Can I just take a refresher first?", a: "Yes — that's exactly what I'd recommend. 6 months of focused Python + ML library practice, then come back. You'll get the full value of the program at that point." }
+        ]
+      },
+
+      '15-20-management': {
+        reason: 'Very senior with recent coding background, aiming for AI/ML leadership — Flagship\'s leadership angle is the fit.',
+        pitch: [
+          'Pitch FLAGSHIP\'s blended format (live + self-paced) — designed for senior schedules with competing priorities.',
+          'Emphasize the AI/ML team leadership angle — at 15–20 yrs they likely already lead teams; this adds ML credibility.',
+          'Set realistic expectations: this is a transition tool to add ML to their existing leadership role, not a fast-track to a new IC hire.'
+        ],
+        objections: [
+          { q: "Am I too senior for an ML transition?", a: "At this stage, the transition is about adding ML credibility to your existing leadership role, not starting over. Flagship is exactly the right scope for that — broader and management-aware, not a junior IC bootcamp." },
+          { q: "I have 17 years — will the cohort feel right?", a: "You'll be among the senior learners in the cohort. We have many students with 15+ years; the live sessions and coaching are calibrated to accommodate experienced leaders." },
+          { q: "Will I actually get hired for an ML role at my age?", a: "If you're targeting an ML IC role, that's a harder pitch at 15–20 yrs. If you're targeting an AI/ML leadership role at your current company or a similar level elsewhere, this is the right credential. Let's talk about which direction you're aiming for." }
+        ]
+      },
+
+      '15-20-research-misfit': {
+        reason: 'At 15–20 yrs, research-oriented IC roles typically require prior ML/research industry experience that our programs don\'t substitute. Not a fit.',
+        pitch: [
+          'Politely decline. Senior research IC roles (Applied Scientist L5+, Research Scientist) typically require existing ML industry experience as a hard prerequisite — neither IK program substitutes for that.',
+          'If they want to reposition toward AI/ML leadership instead of research IC, Flagship becomes viable — re-route via the management direction.',
+          'Preserve the relationship; they may refer others or pivot their goal.'
+        ],
+        objections: [
+          { q: "Why not Advanced ML — isn\'t that for research?", a: "Advanced ML prepares engineers transitioning INTO research-track IC roles, primarily at L3/L4. At 15–20 yrs you\'d be applying for L5+ research positions, which expect 3–5 yrs of prior ML industry experience as a baseline." },
+          { q: "I have 18 years of solid engineering — surely that counts?", a: "Engineering depth is respected, but research IC roles specifically want published or applied ML work as evidence. Without that track record, the program graduate signal isn\'t enough at that level." },
+          { q: "Can I shift to a management track instead?", a: "Yes, and Flagship is built for exactly that pivot. Want me to re-evaluate you in the management bucket?" }
+        ]
+      },
+
+      '15-20-no-recent-coding': {
+        reason: 'Very senior + no recent coding (>5 yr gap or never coded) = too large a gap at this stage. Not a fit.',
+        pitch: [
+          'Decline politely. Not a fit.',
+          'Preserve the relationship for potential referrals.',
+          'Keep the exit short — they may refer other leaders in their network.'
+        ],
+        objections: [
+          { q: "I'm ready to commit.", a: "I appreciate the energy. For someone with your career capital, this isn't the right risk / reward — the coding gap at 15+ years is structural, and I don't want to take your money for an outcome I'm not confident in." },
+          { q: "Why not give me a chance?", a: "I'd rather refer you somewhere that fits than enroll you somewhere that doesn't. Let me know if a Python foundation track would help — I can point you to free resources." }
+        ]
+      },
+
+      '20-plus': {
+        reason: 'Total experience >20 years — historical placement data shows very low conversion across both programs.',
+        pitch: [
+          'Politely decline regardless of profile.',
+          'Keep it brief and respectful — they may refer others to IK.',
+          'No pre-work suggestion — at this experience level it\'s not a foundation issue, it\'s a market-fit issue.'
+        ],
+        objections: [
+          { q: "Why not?", a: "Our placement data shows time-to-role at 20+ years of total experience is significantly longer than our programs are designed to support. I don't want to set you up for that." },
+          { q: "I have the budget and the time — what's the issue?", a: "The issue isn't on our side — it's market demand. Employers hiring ML talent target the 0–15 year band. Past 20 years, the hiring narrative shifts and our program isn't the right tool to help with that shift." }
+        ]
+      }
+    };
+
+    /* ============================================================
+     * STATE + UI LOGIC
+     * ============================================================ */
+    const state = { years: null, coding: null, background: null, direction: null };
+
+    const yearsControl = document.getElementById('years-control');
+    const dynamicContainer = document.getElementById('dynamic-questions');
+    const submitBtn = document.getElementById('submit-btn');
+    const resultCard = document.getElementById('result-card');
+    const copyBtn = document.getElementById('copy-btn');
+    const resetBtn = document.getElementById('reset-btn');
+
+    let currentResult = null;
+
+    // Years bucket selection
+    yearsControl.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-value]');
+      if (!btn) return;
+      yearsControl.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      state.years = btn.dataset.value;
+      state.coding = null;
+      state.background = null;
+      state.direction = null;
+      renderDynamicQuestions();
+      hideResult();
+      updateSubmitState();
+    });
+
+    // Render ALL relevant questions for the selected bucket upfront — no cascading reveal
+    function renderDynamicQuestions() {
+      dynamicContainer.innerHTML = '';
+
+      if (state.years === '20+') {
+        // No further questions
+        return;
+      }
+
+      if (state.years === '0-7') {
+        addCodingQuestion(2, 3);
+        addBackgroundQuestion(3, 3);
+        return;
+      }
+
+      if (state.years === '8-15' || state.years === '15-20') {
+        addCodingRecencyQuestion(2, 3);
+        addDirectionQuestion(3, 3);
+        return;
+      }
+    }
+
+    function addCodingQuestion(step, total) {
+      const html = `
+        <div class="question">
+          <span class="step-label">Step ${step} of ${total}</span>
+          <h3>Are they an active coder?</h3>
+          <div class="radio-group" data-field="coding">
+            <label class="radio-option" data-value="active">
+              <input type="radio" name="coding" value="active">
+              <span class="radio-label"><strong>Yes — actively coding</strong><span class="hint">Codes in their current role (SWE, Data Eng, etc.)</span></span>
+            </label>
+            <label class="radio-option" data-value="inactive">
+              <input type="radio" name="coding" value="inactive">
+              <span class="radio-label"><strong>No — not currently coding</strong><span class="hint">Doesn\'t write code in their current role</span></span>
+            </label>
+          </div>
+        </div>
+      `;
+      dynamicContainer.insertAdjacentHTML('beforeend', html);
+      attachRadioHandlers(dynamicContainer.lastElementChild);
+    }
+
+    function addCodingRecencyQuestion(step, total) {
+      const html = `
+        <div class="question">
+          <span class="step-label">Step ${step} of ${total}</span>
+          <h3>Are they an active coder, OR have they coded actively within the last 5 years?</h3>
+          <div class="radio-group" data-field="coding">
+            <label class="radio-option" data-value="recent">
+              <input type="radio" name="coding" value="recent">
+              <span class="radio-label"><strong>Yes</strong><span class="hint">Active coder OR non-active coder (TPM, EM) who coded hands-on within last 5 yrs</span></span>
+            </label>
+            <label class="radio-option" data-value="none">
+              <input type="radio" name="coding" value="none">
+              <span class="radio-label"><strong>No</strong><span class="hint">Last coded &gt; 5 yrs ago, or never coded professionally</span></span>
+            </label>
+          </div>
+        </div>
+      `;
+      dynamicContainer.insertAdjacentHTML('beforeend', html);
+      attachRadioHandlers(dynamicContainer.lastElementChild);
+    }
+
+    function addBackgroundQuestion(step, total) {
+      const html = `
+        <div class="question">
+          <span class="step-label">Step ${step} of ${total}</span>
+          <h3>Did they graduate in a STEM field?</h3>
+          <div class="radio-group" data-field="background">
+            <label class="radio-option" data-value="stem">
+              <input type="radio" name="background" value="stem">
+              <span class="radio-label"><strong>Yes — STEM degree</strong><span class="hint">CS, Statistics, Math, Engineering, Physics, related</span></span>
+            </label>
+            <label class="radio-option" data-value="non-stem">
+              <input type="radio" name="background" value="non-stem">
+              <span class="radio-label"><strong>No — Non-STEM degree</strong><span class="hint">Humanities, business, arts, social sciences</span></span>
+            </label>
+          </div>
+        </div>
+      `;
+      dynamicContainer.insertAdjacentHTML('beforeend', html);
+      attachRadioHandlers(dynamicContainer.lastElementChild);
+    }
+
+    function addDirectionQuestion(step, total) {
+      const html = `
+        <div class="question">
+          <span class="step-label">Step ${step} of ${total}</span>
+          <h3>What's their target direction?</h3>
+          <div class="radio-group" data-field="direction">
+            <label class="radio-option" data-value="management">
+              <input type="radio" name="direction" value="management">
+              <span class="radio-label"><strong>Management / Leadership</strong><span class="hint">Aiming to lead AI/ML teams (Tech PM, EM, AI Lead)</span></span>
+            </label>
+            <label class="radio-option" data-value="research">
+              <input type="radio" name="direction" value="research">
+              <span class="radio-label"><strong>Research-oriented IC</strong><span class="hint">Research Analyst, Applied Scientist, Research Engineer</span></span>
+            </label>
+          </div>
+        </div>
+      `;
+      dynamicContainer.insertAdjacentHTML('beforeend', html);
+      attachRadioHandlers(dynamicContainer.lastElementChild);
+    }
+
+    function attachRadioHandlers(questionEl) {
+      const field = questionEl.querySelector('.radio-group').dataset.field;
+      questionEl.querySelectorAll('.radio-option').forEach(opt => {
+        opt.addEventListener('click', (e) => {
+          // ensure radio input gets checked even if label click
+          const input = opt.querySelector('input[type="radio"]');
+          input.checked = true;
+          questionEl.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+          opt.classList.add('selected');
+          state[field] = opt.dataset.value;
+          hideResult();
+          updateSubmitState();
+        });
+      });
+    }
+
+    function updateSubmitState() {
+      let ready = false;
+
+      if (!state.years) {
+        ready = false;
+      } else if (state.years === '20+') {
+        ready = true;
+      } else if (state.years === '0-7') {
+        // Need coding answered. Background only required if not active.
+        if (state.coding === 'active') ready = !!state.background; // ask for completeness
+        else if (state.coding === 'inactive') ready = !!state.background;
+      } else if (state.years === '8-15') {
+        // Need coding + direction. Direction only used if recent, but always ask.
+        ready = !!state.coding && !!state.direction;
+      } else if (state.years === '15-20') {
+        ready = !!state.coding && !!state.direction;
+      }
+
+      submitBtn.disabled = !ready;
+    }
+
+    submitBtn.addEventListener('click', () => {
+      if (submitBtn.disabled) return;
+      currentResult = routeLead(state);
+      renderResult(currentResult);
+    });
+
+    function renderResult(r) {
+      const badge = document.getElementById('result-badge');
+      badge.className = 'result-badge';
+      if (r.outcome === 'BOTH') { badge.classList.add('both'); badge.textContent = 'BOTH ADV & FLAGSHIP ML'; }
+      else if (r.outcome === 'ADVANCED') { badge.classList.add('advanced'); badge.textContent = 'ADVANCED ML'; }
+      else if (r.outcome === 'FLAGSHIP') { badge.classList.add('flagship'); badge.textContent = 'FLAGSHIP ML'; }
+      else { badge.classList.add('misfit'); badge.textContent = 'MISFIT — do not enroll'; }
+
+      document.getElementById('result-reason').textContent = r.reason;
+
+      const pitchUl = document.getElementById('pitch-list');
+      pitchUl.innerHTML = '';
+      r.pitch.forEach(p => {
+        const li = document.createElement('li');
+        li.textContent = p;
+        pitchUl.appendChild(li);
+      });
+
+      const objUl = document.getElementById('objection-list');
+      objUl.innerHTML = '';
+      r.objections.forEach(o => {
+        const li = document.createElement('li');
+        const q = document.createElement('div');
+        q.className = 'objection-q';
+        q.textContent = o.q;
+        const a = document.createElement('div');
+        a.className = 'objection-a';
+        a.textContent = o.a;
+        li.appendChild(q);
+        li.appendChild(a);
+        objUl.appendChild(li);
+      });
+
+      resultCard.classList.add('visible');
+      resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function hideResult() {
+      resultCard.classList.remove('visible');
+    }
+
+    copyBtn.addEventListener('click', () => {
+      if (!currentResult) return;
+      navigator.clipboard.writeText(currentResult.crmNote).then(
+        () => toast('CRM note copied to clipboard'),
+        () => toast('Copy failed — select the result and copy manually')
+      );
+    });
+
+    resetBtn.addEventListener('click', () => {
+      state.years = null; state.coding = null; state.background = null; state.direction = null;
+      yearsControl.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
+      dynamicContainer.innerHTML = '';
+      hideResult();
+      currentResult = null;
+      submitBtn.disabled = true;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    function toast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(() => t.classList.remove('show'), 2400);
+    }
+  </script>
+</body>
+</html>
